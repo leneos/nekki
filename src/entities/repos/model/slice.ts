@@ -6,7 +6,7 @@ import { getReposThunk } from './thunks'
 import { SLICE_NAME } from './constants'
 import { showErrorToast } from '@/shared/toasts/show-error-toast'
 
-export type Repo = RestEndpointMethodTypes["repos"]["listForUser"]['response']['data'][number]
+export type Repo = RestEndpointMethodTypes["repos"]["listForAuthenticatedUser"]['response']['data'][number]
 
 interface ReposState {
   repos: Repo[] | null

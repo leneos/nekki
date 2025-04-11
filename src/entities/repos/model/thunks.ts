@@ -24,7 +24,7 @@ export const getReposThunk = createAsyncThunk(
     const octokit = getOctokit(token)
 
     try {
-      const repos = await octokit.rest.repos.listForUser({
+      const repos = await octokit.rest.repos.listForAuthenticatedUser({
         username,
       })
       return repos.data
