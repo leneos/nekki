@@ -1,0 +1,1 @@
+export type LoadingStages = 'idle' | 'loading' | 'success' | 'error'
