@@ -27,6 +27,8 @@ const RepoCard: FC<RepoCardProps> = ({
 }) => {
   const [isEditDialogOpened, setIsEditDialogOpened] = useState(false);
   const [isViewDialogOpened, setIsViewDialogOpened] = useState(false);
+  const [isDeleteDialogOpened, setIsDeleteDialogOpened] = useState(false);
+
   return (
     <>
       {isViewDialogOpened && (
@@ -53,6 +55,13 @@ const RepoCard: FC<RepoCardProps> = ({
             visibility: repo.visibility as "public" | "private",
             repo: repo.name,
           }}
+        />
+      )}
+      {isDeleteDialogOpened && (
+        <ConfirmDangerDialog
+          open={isDeleteDialogOpened}
+          onOpenChange={setIsDeleteDialogOpened}
+          onConfirm={handleDeleteRepo}
         />
       )}
       <Card className="w-full h-full">
@@ -82,14 +91,13 @@ const RepoCard: FC<RepoCardProps> = ({
             </Button>
           </CardAction>
           <CardAction className="w-full">
-            <ConfirmDangerDialog
-              onConfirm={handleDeleteRepo}
-              trigger={
-                <Button className="w-full" variant={"destructive"}>
-                  Delete
-                </Button>
-              }
-            />
+            <Button
+              onClick={() => setIsDeleteDialogOpened(true)}
+              className="w-full"
+              variant={"destructive"}
+            >
+              Delete
+            </Button>
           </CardAction>
         </CardFooter>
       </Card>
