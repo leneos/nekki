@@ -10,12 +10,14 @@ export type Repo = RestEndpointMethodTypes["repos"]["listForAuthenticatedUser"][
 
 interface ReposState {
   repos: Repo[] | null
+  totalCount: number
   error: string | null
   stage: LoadingStages
 }
 
 const initialState: ReposState = {
   repos: [],
+  totalCount: 0,
   error: null,
   stage: 'idle',
 }
@@ -27,6 +29,7 @@ const reposSlice = createSlice({
     repos: (state) => state.repos,
     error: (state) => state.error,
     stage: (state) => state.stage,
+    totalCount: (state) => state.totalCount,
   },
   reducers: {},
   extraReducers: (builder) => {
@@ -37,7 +40,8 @@ const reposSlice = createSlice({
     })
       .addCase(getReposThunk.fulfilled, (state, action) => {
         state.stage = 'success'
-        state.repos = action.payload
+        state.repos = action.payload.repos
+        state.totalCount = action.payload.totalCount
         state.error = null
       })
       .addCase(getReposThunk.rejected, (state, action) => {

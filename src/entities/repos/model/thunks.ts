@@ -3,31 +3,45 @@ import { getOctokit } from '@/shared/octokit'
 import { createAsyncThunk } from '@reduxjs/toolkit'
 import { SLICE_NAME } from './constants'
 
+export const REPOS_PER_PAGE = 30
+
+export interface GetReposThunkDraft {
+  page: number,
+}
+
 export const getReposThunk = createAsyncThunk(
   `${SLICE_NAME}/getReposThunk`,
-  async (_, {
+  async (draft: GetReposThunkDraft, {
     rejectWithValue,
     getState
   }) => {
     const state = getState() as RootState
     const token = state.auth.token
-    const username = state.auth.user?.login
+
+    const octokit = getOctokit(token)
+
+    const userRes = await octokit.rest.users.getAuthenticated()
+    const user = userRes.data
+    const username = user?.login
 
     if (!token) {
       return rejectWithValue(new Error('Token not found'))
     }
 
-    if (!username) {
-      return rejectWithValue(new Error('Username not found'))
+    if (!user || !username) {
+      return rejectWithValue(new Error('User not found'))
     }
 
-    const octokit = getOctokit(token)
+    const totalCount = (user?.public_repos || 0) + (user?.total_private_repos || 0)
+
 
     try {
       const repos = await octokit.rest.repos.listForAuthenticatedUser({
+        page: draft.page,
+        per_page: REPOS_PER_PAGE,
         username,
       })
-      return repos.data
+      return ({ repos: repos.data, totalCount })
     } catch (error) {
       return rejectWithValue(error)
     }

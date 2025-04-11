@@ -1,17 +1,18 @@
 import { useDispatch, useSelector } from "@/app/providers/store"
 import { useMemo } from "react"
 import { reposSliceSelectors } from "@/entities/repos/model/slice"
-import { CreateRepoDraft, createRepoThunk, DeleteRepoDraft, deleteRepoThunk, EditRepoDraft, editRepoThunk, getReposThunk } from "../model/thunks"
+import { CreateRepoDraft, createRepoThunk, DeleteRepoDraft, deleteRepoThunk, EditRepoDraft, editRepoThunk, getReposThunk, GetReposThunkDraft } from "../model/thunks"
 
 const useRepos = () => {
   const dispatch = useDispatch()
   const repos = useSelector(reposSliceSelectors.repos)
   const stage = useSelector(reposSliceSelectors.stage)
   const error = useSelector(reposSliceSelectors.error)
+  const totalCount = useSelector(reposSliceSelectors.totalCount)
 
   const thunks = useMemo(() => ({
-    getRepos: () => {
-      return dispatch(getReposThunk())
+    getRepos: (draft: GetReposThunkDraft) => {
+      return dispatch(getReposThunk(draft))
     },
     createRepo: (draft: CreateRepoDraft) => {
       return dispatch(createRepoThunk(draft))
@@ -25,7 +26,7 @@ const useRepos = () => {
   }), [dispatch])
 
   return (
-    { stage, error, repos, thunks }
+    { stage, error, repos, thunks, totalCount }
   )
 }
 
